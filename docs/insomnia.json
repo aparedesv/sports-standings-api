@@ -1,0 +1,504 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2024-12-20T18:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_1",
+      "parentId": null,
+      "_type": "workspace",
+      "name": "Sport Standings API",
+      "description": "API de resultats i classificacions esportives. Font de dades: openfootball/football.json",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_1",
+      "parentId": "wrk_1",
+      "_type": "environment",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8000/api",
+        "token": "",
+        "_info_leagues": "es.1, es.2, en.1, en.2, de.1, de.2, it.1, it.2, fr.1, fr.2, pt.1, nl.1, be.1, at.1, ch.1",
+        "_info_seasons": "2024-25, 2023-24, 2022-23, 2021-22, 2020-21"
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url", "token", "_info_leagues", "_info_seasons"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Auth",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1
+    },
+    {
+      "_id": "fld_countries",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Countries",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -2
+    },
+    {
+      "_id": "fld_leagues",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Leagues",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -3
+    },
+    {
+      "_id": "fld_teams",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Teams",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -4
+    },
+    {
+      "_id": "fld_fixtures",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Fixtures",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -5
+    },
+    {
+      "_id": "fld_standings",
+      "parentId": "wrk_1",
+      "_type": "request_group",
+      "name": "Standings",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -6
+    },
+    {
+      "_id": "req_1",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Register",
+      "description": "",
+      "url": "{{ _.base_url }}/register",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_2",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Login",
+      "description": "",
+      "url": "{{ _.base_url }}/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"info@osonaweb.cat\",\n  \"password\": \"admin1234\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "Accept", "value": "application/json" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_3",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Logout",
+      "description": "",
+      "url": "{{ _.base_url }}/logout",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -3,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_4",
+      "parentId": "fld_auth",
+      "_type": "request",
+      "name": "Get Current User",
+      "description": "",
+      "url": "{{ _.base_url }}/user",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -4,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_5",
+      "parentId": "fld_countries",
+      "_type": "request",
+      "name": "List Countries",
+      "description": "",
+      "url": "{{ _.base_url }}/countries",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_6",
+      "parentId": "fld_countries",
+      "_type": "request",
+      "name": "Get Country",
+      "description": "",
+      "url": "{{ _.base_url }}/countries/1",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_7",
+      "parentId": "fld_leagues",
+      "_type": "request",
+      "name": "List Leagues",
+      "description": "",
+      "url": "{{ _.base_url }}/leagues",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "country_id", "value": "", "disabled": true },
+        { "name": "type", "value": "", "disabled": true }
+      ],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_8",
+      "parentId": "fld_leagues",
+      "_type": "request",
+      "name": "Get League",
+      "description": "",
+      "url": "{{ _.base_url }}/leagues/1",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_9",
+      "parentId": "fld_teams",
+      "_type": "request",
+      "name": "List Teams",
+      "description": "",
+      "url": "{{ _.base_url }}/teams",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "country_id", "value": "", "disabled": true },
+        { "name": "search", "value": "", "disabled": true }
+      ],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_10",
+      "parentId": "fld_teams",
+      "_type": "request",
+      "name": "Get Team",
+      "description": "",
+      "url": "{{ _.base_url }}/teams/1",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_11",
+      "parentId": "fld_fixtures",
+      "_type": "request",
+      "name": "List Fixtures",
+      "description": "",
+      "url": "{{ _.base_url }}/fixtures",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "league_id", "value": "", "disabled": true },
+        { "name": "season_id", "value": "", "disabled": true },
+        { "name": "team_id", "value": "", "disabled": true },
+        { "name": "date", "value": "", "disabled": true },
+        { "name": "status", "value": "", "disabled": true },
+        { "name": "from", "value": "", "disabled": true },
+        { "name": "to", "value": "", "disabled": true },
+        { "name": "round", "value": "", "disabled": true }
+      ],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_12",
+      "parentId": "fld_fixtures",
+      "_type": "request",
+      "name": "Live Fixtures",
+      "description": "",
+      "url": "{{ _.base_url }}/fixtures/live",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_13",
+      "parentId": "fld_fixtures",
+      "_type": "request",
+      "name": "Today Fixtures",
+      "description": "",
+      "url": "{{ _.base_url }}/fixtures/today",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -3,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_14",
+      "parentId": "fld_fixtures",
+      "_type": "request",
+      "name": "Get Fixture",
+      "description": "",
+      "url": "{{ _.base_url }}/fixtures/1",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -4,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_15",
+      "parentId": "fld_standings",
+      "_type": "request",
+      "name": "List Standings",
+      "description": "",
+      "url": "{{ _.base_url }}/standings",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "league_id", "value": "", "disabled": true },
+        { "name": "season_id", "value": "", "disabled": true }
+      ],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_16",
+      "parentId": "fld_standings",
+      "_type": "request",
+      "name": "Standings by League",
+      "description": "",
+      "url": "{{ _.base_url }}/standings/league/1",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "season_id", "value": "", "disabled": true }
+      ],
+      "headers": [
+        { "name": "Accept", "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{ _.token }}" }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    }
+  ]
+}
