@@ -1,0 +1,229 @@
+// Variables
+$font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
+
+$color-bg: #0d1117;
+$color-bg-secondary: #161b22;
+$color-bg-hover: #1f2428;
+$color-border: #21262d;
+$color-border-subtle: #161b22;
+
+$color-text: #c9d1d9;
+$color-text-muted: #8b949e;
+$color-text-subtle: #6e7681;
+
+$color-primary: #58a6ff;
+$color-accent: #f0883e;
+$color-success: #3fb950;
+$color-danger: #f85149;
+
+// Reset
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+// Base
+body {
+    font-family: $font-mono;
+    font-size: 12px;
+    line-height: 1.4;
+    background: $color-bg;
+    color: $color-text;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 14px;
+    font-weight: normal;
+    color: $color-primary;
+    margin-bottom: 20px;
+    border-bottom: 1px solid $color-border;
+    padding-bottom: 10px;
+}
+
+// Tabs
+.tabs {
+    margin-bottom: 20px;
+
+    input[type="radio"] {
+        display: none;
+    }
+}
+
+.tabs-nav {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid $color-border;
+    margin-bottom: 20px;
+
+    label {
+        padding: 8px 16px;
+        cursor: pointer;
+        color: $color-text-muted;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        transition: all 0.2s;
+
+        &:hover {
+            color: $color-text;
+        }
+    }
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-active {
+    color: $color-primary !important;
+    border-bottom-color: $color-primary !important;
+}
+
+// Accordions
+.accordion {
+    margin-bottom: 5px;
+
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    input:checked + .accordion-header::before {
+        transform: rotate(90deg);
+    }
+
+    input:checked + .accordion-header {
+        border-bottom-color: transparent;
+    }
+
+    input:checked ~ .accordion-content {
+        max-height: 5000px;
+    }
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: $color-bg-secondary;
+    border: 1px solid $color-border;
+    cursor: pointer;
+    color: $color-accent;
+    font-size: 13px;
+    transition: all 0.2s;
+
+    &:hover {
+        background: $color-bg-hover;
+    }
+
+    &::before {
+        content: '▶';
+        font-size: 10px;
+        margin-right: 10px;
+        transition: transform 0.2s;
+        color: $color-text-subtle;
+    }
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    border: 1px solid $color-border;
+    border-top: none;
+    transition: max-height 0.3s ease-out;
+}
+
+.accordion-inner {
+    padding: 15px;
+}
+
+// Leagues grid
+.leagues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.league {
+    background: $color-bg;
+}
+
+.league-name {
+    color: $color-text-muted;
+    margin-bottom: 8px;
+    font-size: 11px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid $color-border;
+
+    span {
+        color: $color-text-subtle;
+    }
+}
+
+// Tables
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+th {
+    text-align: left;
+    color: $color-text-subtle;
+    font-weight: normal;
+    padding: 3px 4px;
+    border-bottom: 1px solid $color-border;
+
+    &.num {
+        text-align: right;
+    }
+}
+
+td {
+    padding: 3px 4px;
+    border-bottom: 1px solid $color-border-subtle;
+
+    &.num {
+        text-align: right;
+        color: $color-text-muted;
+    }
+
+    &.rank {
+        color: $color-text-subtle;
+        width: 20px;
+    }
+
+    &.team {
+        color: $color-text;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &.pts {
+        color: $color-primary;
+        font-weight: bold;
+    }
+}
+
+tr:hover td {
+    background: $color-bg-secondary;
+}
+
+// Standing positions
+.top-4 td.rank {
+    color: $color-success;
+}
+
+.relegation td.rank {
+    color: $color-danger;
+}
+
+// Utilities
+.no-data {
+    color: $color-text-subtle;
+    font-style: italic;
+    padding: 10px 0;
+}

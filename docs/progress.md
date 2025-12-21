@@ -255,6 +255,7 @@ sport-standings-api/
 │   │   │   │   ├── TeamController.php
 │   │   │   │   ├── FixtureController.php
 │   │   │   │   └── StandingController.php
+│   │   │   ├── HomeController.php          # Vista pública
 │   │   │   └── RequestDocsController.php   # Override per exclude_http_methods
 │   │   └── Middleware/
 │   │       ├── PermissionMiddleware.php
@@ -294,12 +295,18 @@ sport-standings-api/
 ├── docs/
 │   ├── insomnia.json
 │   └── progress.md
+├── resources/
+│   ├── scss/
+│   │   └── style.scss                      # Estils SCSS
+│   └── views/
+│       └── home.blade.php                  # Vista pública
 ├── routes/
 │   ├── api.php
-│   └── console.php          # Scheduler configuration
+│   ├── web.php               # Ruta home
+│   └── console.php           # Scheduler configuration
 └── storage/
     └── logs/
-        └── sync-all.log     # Sync logs
+        └── sync-all.log      # Sync logs
 ```
 
 ---
@@ -439,7 +446,76 @@ GET /api/fixtures?season_id=317
 
 ---
 
-## 10. Pròxims Passos Suggerits
+## 10. Vista Pública (Home)
+
+### Descripció:
+Vista pública minimalista que mostra les classificacions de totes les lligues, organitzada per esports i temporades.
+
+### Accés:
+```
+http://localhost:8000/
+```
+
+### Característiques:
+- Disseny minimalista amb font monospace (estil terminal)
+- Tema fosc (GitHub dark)
+- Tabs per esports (preparat per futurs esports)
+- Acordions per temporades (només mostra temporades amb dades)
+- Grid responsive de lligues
+- Indicadors de color: verd (top 4), vermell (descens)
+
+### Ordenació de lligues:
+1. **Lligues principals** (primer):
+   - Premier League (England)
+   - Bundesliga (Germany)
+   - Serie A (Italy)
+   - La Liga (Spain)
+2. **Resta de lligues** (després):
+   - Ordenades alfabèticament per país i nom de lliga
+
+### Fitxers:
+| Fitxer | Descripció |
+|--------|------------|
+| `app/Http/Controllers/HomeController.php` | Controller amb lògica de dades |
+| `resources/views/home.blade.php` | Vista Blade amb tabs i acordions |
+| `resources/scss/style.scss` | Estils SCSS amb variables |
+| `routes/web.php` | Ruta principal `/` |
+
+### Assets (Vite + SCSS):
+```bash
+# Desenvolupament
+npm run dev
+
+# Producció
+npm run build
+```
+
+### Variables SCSS principals:
+```scss
+$color-bg: #0d1117;
+$color-primary: #58a6ff;
+$color-accent: #f0883e;
+$color-success: #3fb950;
+$color-danger: #f85149;
+```
+
+### Estructura de dades:
+```php
+$sports = [
+    'football' => [
+        'name' => 'Football',
+        'seasons' => [
+            '2025' => [Season, Season, ...],  // 4 lligues principals + resta
+            '2024' => [...],
+        ],
+    ],
+    // Futurs esports...
+];
+```
+
+---
+
+## 11. Pròxims Passos Suggerits
 
 - [ ] Afegir més esports (bàsquet, tennis, etc.)
 - [ ] Afegir WebSockets per resultats en temps real
@@ -452,6 +528,7 @@ GET /api/fixtures?season_id=317
 - [x] Suport temporada 2025-26 - **Completat**
 - [x] Sincronitzar totes les lligues 2025-26 - **Completat (15 lligues, 4.742 partits)**
 - [x] Eliminar rutes HEAD duplicades de request-docs - **Completat (controller override)**
+- [x] Vista pública amb classificacions - **Completat (tabs + acordions)**
 
 ---
 
@@ -495,4 +572,4 @@ php artisan lrd:export                        # Exportar OpenAPI JSON
 
 ---
 
-*Última actualització: 2025-12-20*
+*Última actualització: 2025-12-21*

@@ -2,10 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RequestDocsController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 // Laravel Request Docs routes (custom controller to apply exclude_http_methods config)
 Route::get('request-docs', [RequestDocsController::class, 'index'])->name('request-docs.index');
