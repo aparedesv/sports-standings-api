@@ -2,10 +2,19 @@
 
 ## Resum del Projecte
 
-Aplicació dedicada exclusivament al ciclisme professional. Inclou:
+Aplicació dedicada exclusivament al ciclisme professional amb **wallpaper dinàmic 1920x1080**.
+
+### Contingut:
 - **Road Cycling**: 3 Grans Voltes (Giro, Tour, Vuelta) + 8 Clàssiques (5 Monuments + 3 altres)
-- **Ciclocross (CX)**: World Championships + UCI World Cup (Men/Women)
-- **Mountain Bike (MTB/BTT)**: XCO World Cup + Downhill World Cup + Olympics
+- **Ciclocross (CX)**: World Championships + UCI World Cup
+- **Mountain Bike (MTB/BTT)**: XCO World Cup + Downhill World Cup
+
+### Característiques:
+- Layout 3 columnes (Classics | Grand Tours | CX+MTB)
+- Dual-column men/women per totes les seccions
+- Auto-refresh cada hora (meta refresh)
+- Dades 2025 actualitzades
+- Disseny compacte per wallpaper (sense scroll)
 
 Utilitza fitxers JSON locals per emmagatzemar les dades de ciclisme.
 
@@ -712,41 +721,73 @@ Tennis:     https://site.api.espn.com/apis/site/v2/sports/tennis/atp/rankings
 
 **Fitxer JSON:** `storage/app/cycling/mtb.json`
 
-**XCO World Cup 2024:**
-| Categoria | Líder | País | Punts |
-|-----------|-------|------|-------|
-| Men Elite | Tom Pidcock | GBR | 1420 |
-| Women Elite | Puck Pieterse | NED | 1380 |
+**XCO World Cup 2025:**
+| Categoria | Campió | País | Punts |
+|-----------|--------|------|-------|
+| Men Elite | Christopher Blevins | USA | 1680 |
+| Women Elite | Samara Maxwell | AUS | 2103 |
 
-**Top 5 Men XCO World Cup 2024:**
+**Top 10 Men XCO World Cup 2025:**
 | Rank | Rider | Country | Points |
 |------|-------|---------|--------|
-| 1 | Tom Pidcock | GBR | 1420 |
-| 2 | Nino Schurter | SUI | 1285 |
-| 3 | Alan Hatherly | RSA | 1190 |
-| 4 | Victor Koretzky | FRA | 1125 |
-| 5 | Sam Gaze | NZL | 1050 |
+| 1 | Christopher Blevins | USA | 1680 |
+| 2 | Martin Vidaurre | CHI | 1575 |
+| 3 | Luca Martin | FRA | 1285 |
+| 4 | Fabio Püntener | SUI | 1240 |
+| 5 | Luca Braidot | ITA | 1041 |
+| 6 | Mathis Azzaro | FRA | 1021 |
+| 7 | Simone Avondetto | ITA | 1020 |
+| 8 | Victor Koretzky | FRA | 1010 |
+| 9 | Luca Schwarzbauer | GER | 937 |
+| 10 | Charlie Aldridge | GBR | 916 |
 
-**Top 5 Women XCO World Cup 2024:**
+**Top 10 Women XCO World Cup 2025:**
 | Rank | Rider | Country | Points |
 |------|-------|---------|--------|
-| 1 | Puck Pieterse | NED | 1380 |
-| 2 | Pauline Ferrand-Prévot | FRA | 1320 |
-| 3 | Haley Batten | USA | 1185 |
-| 4 | Laura Stigger | AUT | 1090 |
-| 5 | Loana Lecomte | FRA | 1025 |
+| 1 | Samara Maxwell | AUS | 2103 |
+| 2 | Jenny Rissveds | SWE | 1876 |
+| 3 | Alessandra Keller | SUI | 1654 |
+| 4 | Evie Richards | GBR | 1457 |
+| 5 | Puck Pieterse | NED | 1398 |
+| 6 | Laura Stigger | AUT | 1287 |
+| 7 | Haley Batten | USA | 1198 |
+| 8 | Candice Lill | RSA | 1076 |
+| 9 | Anne Terpstra | NED | 987 |
+| 10 | Loana Lecomte | FRA | 923 |
 
-**Downhill World Cup 2024:**
-| Categoria | Líder | País | Punts |
-|-----------|-------|------|-------|
-| Men Elite | Loïc Bruni | FRA | 1180 |
-| Women Elite | Valentina Höll | AUT | 1250 |
+**Downhill World Cup 2025:**
+| Categoria | Campió | País | Punts |
+|-----------|--------|------|-------|
+| Men Elite | Jackson Goldstone | CAN | 1946 |
+| Women Elite | Tahnée Seagrave | GBR | 1812 |
 
-**Paris 2024 Olympics - MTB XCO:**
-| Categoria | Gold | Silver | Bronze |
-|-----------|------|--------|--------|
-| Men Elite | Tom Pidcock (GBR) | Victor Koretzky (FRA) | Alan Hatherly (RSA) |
-| Women Elite | Pauline Ferrand-Prévot (FRA) | Haley Batten (USA) | Jenny Rissveds (SWE) |
+**Top 10 Men DH World Cup 2025:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Jackson Goldstone | CAN | 1946 |
+| 2 | Loïc Bruni | FRA | 1768 |
+| 3 | Loris Vergier | FRA | 1425 |
+| 4 | Luca Shaw | USA | 1366 |
+| 5 | Dakotah Norton | USA | 1245 |
+| 6 | Amaury Pierron | FRA | 1123 |
+| 7 | Troy Brosnan | AUS | 1087 |
+| 8 | Finn Iles | CAN | 1023 |
+| 9 | Benoit Coulanges | FRA | 956 |
+| 10 | Andreas Kolb | AUT | 912 |
+
+**Top 10 Women DH World Cup 2025:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Tahnée Seagrave | GBR | 1812 |
+| 2 | Nina Hoffmann | GER | 1756 |
+| 3 | Vali Höll | AUT | 1654 |
+| 4 | Marine Cabirou | FRA | 1387 |
+| 5 | Gracey Hemstreet | CAN | 1198 |
+| 6 | Myriam Nicole | FRA | 1054 |
+| 7 | Monika Hrastnik | SLO | 978 |
+| 8 | Eleonora Farina | ITA | 923 |
+| 9 | Anna Newkirk | USA | 867 |
+| 10 | Pomme Cidre | FRA | 756 |
 
 ### Bàsquet Europeu (Euroleague API):
 
@@ -795,46 +836,64 @@ php artisan cache:clear
 
 ---
 
-## 11. Vista Pública (Home)
+## 11. Wallpaper Dinàmic (Home)
 
 ### Descripció:
-Vista pública minimalista que mostra classificacions multiesportives (futbol, bàsquet, NFL, F1, tennis), organitzada per esports i temporades.
+Wallpaper dinàmic 1920x1080 que mostra totes les classificacions de ciclisme (Road + CX + MTB) en una sola pantalla sense scroll. Auto-refresh cada hora.
 
 ### Accés:
 ```
 http://localhost:8000/
 ```
 
-### Característiques:
-- Disseny minimalista amb font monospace (estil terminal)
-- Tema fosc (GitHub dark)
-- Tabs per esports (Football, Basketball, NFL, Formula 1, Tennis)
-- Acordions per temporades
-- Grid responsive de lligues
-- Taules adaptades per cada esport (W/L/D/Pts, W/L/PCT, Rank/Pts)
-- Indicadors de color: verd (top 4/6), taronja (play-in), vermell (descens)
+### Layout (3 columnes):
+```
+┌─────────────────┬─────────────────┬─────────────────┐
+│   MONUMENTS &   │   GRAND TOURS   │   CX + MTB      │
+│    CLASSICS     │                 │                 │
+├─────────────────┼─────────────────┼─────────────────┤
+│ Strade Bianche  │ GIRO D'ITALIA   │ CX WORLD CHAMPS │
+│ Men    | Women  │ Men    | Women  │ Men    | Women  │
+│                 │                 │                 │
+│ Milan-San Remo  │ TOUR DE FRANCE  │ CX WORLD CUP    │
+│ Men    | Women  │ Men    | Women  │ Men    | Women  │
+│                 │                 │                 │
+│ Gent-Wevelgem   │ VUELTA A ESPAÑA │ XCO WORLD CUP   │
+│ Men    | Women  │ Men    | Women  │ Men    | Women  │
+│        ...      │                 │                 │
+│ (8 curses)      │                 │ DH WORLD CUP    │
+│                 │                 │ Men    | Women  │
+└─────────────────┴─────────────────┴─────────────────┘
+```
 
-### Ordenació de lligues:
-1. **Competicions europees** (primer):
-   - Champions League
-   - Europa League
-2. **Lligues principals**:
-   - Premier League, Bundesliga, Serie A, La Liga
-3. **Altres lligues** (ordenades per país):
-   - Ligue 1, Eredivisie, Primeira Liga, Pro League
+### Característiques:
+- **Resolució**: 1920x1080 (Full HD)
+- **Layout**: CSS Grid 3 columnes
+- **Dual-column**: Men/Women per cada secció
+- **Auto-refresh**: Meta refresh cada hora
+- **Tema**: GitHub dark (fons #0d1117)
+- **Font**: Monospace 11px (estil terminal)
+- **Sense scroll**: Tot visible en una pantalla
+
+### Dades mostrades:
+| Secció | Contingut |
+|--------|-----------|
+| Classics | 8 curses × podium (top 3) men + women |
+| Giro GC | Top 10 men + Top 10 women |
+| Tour GC | Top 10 men + Top 10 women |
+| Vuelta GC | Top 10 men + Top 10 women |
+| CX Worlds | Top 10 men + Top 10 women |
+| CX World Cup | Top 10 men + Top 10 women |
+| MTB XCO | Top 10 men + Top 10 women |
+| MTB DH | Top 10 men + Top 10 women |
 
 ### Fitxers:
 | Fitxer | Descripció |
 |--------|------------|
 | `app/Http/Controllers/HomeController.php` | Controller amb lògica de dades |
-| `app/Services/EspnFootballService.php` | Servei ESPN futbol |
-| `app/Services/NbaApiService.php` | Servei ESPN bàsquet |
-| `app/Services/EspnNflService.php` | Servei ESPN NFL |
-| `app/Services/EspnF1Service.php` | Servei ESPN Formula 1 |
-| `app/Services/EspnTennisService.php` | Servei ESPN Tennis |
-| `app/Services/EuroleagueApiService.php` | Servei Euroleague API |
-| `resources/views/home.blade.php` | Vista Blade amb tabs i acordions |
-| `resources/scss/style.scss` | Estils SCSS amb variables |
+| `app/Services/CyclingApiService.php` | Servei dades ciclisme |
+| `resources/views/home.blade.php` | Vista Blade wallpaper |
+| `resources/scss/style.scss` | Estils SCSS wallpaper |
 
 ### Assets (Vite + SCSS):
 ```bash
@@ -845,10 +904,11 @@ npm run build  # Producció
 ### Variables SCSS principals:
 ```scss
 $color-bg: #0d1117;
+$color-bg-secondary: #161b22;
 $color-primary: #58a6ff;
 $color-accent: #f0883e;
 $color-success: #3fb950;
-$color-danger: #f85149;
+$color-gold: #ffd700;
 ```
 
 ---
@@ -920,4 +980,4 @@ php artisan lrd:export                        # Exportar OpenAPI JSON
 
 ---
 
-*Última actualització: 2025-12-24 (Branca cycling: Road + CX + MTB)*
+*Última actualització: 2025-12-24 (Wallpaper 3 columnes amb dades 2025 - Road + CX + MTB)*
