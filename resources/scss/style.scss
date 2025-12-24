@@ -5,7 +5,6 @@ $color-bg: #0d1117;
 $color-bg-secondary: #161b22;
 $color-bg-hover: #1f2428;
 $color-border: #21262d;
-$color-border-subtle: #161b22;
 
 $color-text: #c9d1d9;
 $color-text-muted: #8b949e;
@@ -14,7 +13,7 @@ $color-text-subtle: #6e7681;
 $color-primary: #58a6ff;
 $color-accent: #f0883e;
 $color-success: #3fb950;
-$color-danger: #f85149;
+$color-gold: #ffd700;
 
 // Reset
 * {
@@ -23,211 +22,196 @@ $color-danger: #f85149;
     box-sizing: border-box;
 }
 
-// Base
+// Base - Wallpaper mode
+html, body {
+    height: 100vh;
+    overflow: hidden;
+}
+
 body {
     font-family: $font-mono;
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: 11px;
+    line-height: 1.3;
     background: $color-bg;
     color: $color-text;
-    padding: 20px;
-    min-height: 100vh;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
-h1 {
-    font-size: 14px;
-    font-weight: normal;
-    color: $color-primary;
-    margin-bottom: 20px;
+// Header
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
     border-bottom: 1px solid $color-border;
-    padding-bottom: 10px;
-}
+    flex-shrink: 0;
 
-// Tabs
-.tabs {
-    margin-bottom: 20px;
+    .title {
+        color: $color-primary;
+        font-size: 11px;
+    }
 
-    input[type="radio"] {
-        display: none;
+    .year {
+        color: $color-accent;
+        font-size: 13px;
+        font-weight: bold;
     }
 }
 
-.tabs-nav {
+// Wallpaper Grid - 3 columns
+.wallpaper-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+}
+
+// Sections
+.section {
+    background: $color-bg-secondary;
+    border-radius: 4px;
+    padding: 10px;
+    overflow: hidden;
     display: flex;
-    gap: 2px;
+    flex-direction: column;
+}
+
+.section-title {
+    font-size: 10px;
+    font-weight: bold;
+    color: $color-accent;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
     border-bottom: 1px solid $color-border;
-    margin-bottom: 20px;
+}
 
-    label {
-        padding: 8px 16px;
-        cursor: pointer;
+// Subsections
+.subsection {
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.subsection-title {
+    font-size: 9px;
+    color: $color-text-muted;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+// Rider rows (for rankings)
+.rider-row {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    padding: 1px 0;
+    gap: 5px;
+
+    .rank {
+        color: $color-text-subtle;
+        width: 16px;
+        flex-shrink: 0;
+        text-align: right;
+        padding-right: 2px;
+    }
+
+    .name {
+        color: $color-text;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+    }
+
+    .gap {
+        color: $color-text-subtle;
+        font-size: 9px;
+        flex-shrink: 0;
+        text-align: right;
+        min-width: 50px;
+    }
+
+    .country {
         color: $color-text-muted;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -1px;
-        transition: all 0.2s;
+        font-size: 9px;
+        flex-shrink: 0;
+        width: 28px;
+        text-align: right;
+    }
 
-        &:hover {
+    .points {
+        color: $color-primary;
+        font-size: 9px;
+        flex-shrink: 0;
+        width: 32px;
+        text-align: right;
+    }
+
+    &.leader {
+        .rank {
+            color: $color-gold;
+        }
+        .name {
+            color: $color-success;
+            font-weight: bold;
+        }
+    }
+
+    &.podium {
+        .name {
             color: $color-text;
         }
     }
 }
 
-.tab-content {
-    display: none;
-}
-
-.tab-active {
-    color: $color-primary !important;
-    border-bottom-color: $color-primary !important;
-}
-
-// Accordions
-.accordion {
-    margin-bottom: 5px;
-
-    input[type="checkbox"] {
-        display: none;
-    }
-
-    input:checked + .accordion-header::before {
-        transform: rotate(90deg);
-    }
-
-    input:checked + .accordion-header {
-        border-bottom-color: transparent;
-    }
-
-    input:checked ~ .accordion-content {
-        max-height: 5000px;
-    }
-}
-
-.accordion-header {
+// Dual column layout for men/women
+.dual-column {
     display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    background: $color-bg-secondary;
-    border: 1px solid $color-border;
-    cursor: pointer;
-    color: $color-accent;
-    font-size: 13px;
-    transition: all 0.2s;
-
-    &:hover {
-        background: $color-bg-hover;
-    }
-
-    &::before {
-        content: '▶';
-        font-size: 10px;
-        margin-right: 10px;
-        transition: transform 0.2s;
-        color: $color-text-subtle;
-    }
+    gap: 8px;
 }
 
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    border: 1px solid $color-border;
-    border-top: none;
-    transition: max-height 0.3s ease-out;
+.col {
+    flex: 1;
+    min-width: 0;
 }
 
-.accordion-inner {
-    padding: 15px;
-}
-
-// Leagues grid
-.leagues-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.league {
-    background: $color-bg;
-}
-
-.league-name {
-    color: $color-text-muted;
-    margin-bottom: 8px;
-    font-size: 11px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid $color-border;
-
-    span {
-        color: $color-text-subtle;
-    }
-}
-
-// Tables
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 11px;
-}
-
-th {
-    text-align: left;
+.col-header {
+    display: block;
+    font-size: 8px;
     color: $color-text-subtle;
-    font-weight: normal;
-    padding: 3px 4px;
-    border-bottom: 1px solid $color-border;
-
-    &.num {
-        text-align: right;
-    }
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba($color-border, 0.3);
+    padding-bottom: 2px;
 }
 
-td {
-    padding: 3px 4px;
-    border-bottom: 1px solid $color-border-subtle;
+// Make sections scrollable if content overflows
+.section {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: $color-border transparent;
 
-    &.num {
-        text-align: right;
-        color: $color-text-muted;
-    }
-
-    &.rank {
-        color: $color-text-subtle;
-        width: 20px;
+    &::-webkit-scrollbar {
+        width: 4px;
     }
 
-    &.team {
-        color: $color-text;
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    &::-webkit-scrollbar-track {
+        background: transparent;
     }
 
-    &.pts {
-        color: $color-primary;
-        font-weight: bold;
+    &::-webkit-scrollbar-thumb {
+        background: $color-border;
+        border-radius: 2px;
     }
-}
-
-tr:hover td {
-    background: $color-bg-secondary;
-}
-
-// Standing positions
-.top-4 td.rank {
-    color: $color-success;
-}
-
-.play-in td.rank {
-    color: $color-accent;
-}
-
-.relegation td.rank {
-    color: $color-danger;
-}
-
-// Utilities
-.no-data {
-    color: $color-text-subtle;
-    font-style: italic;
-    padding: 10px 0;
 }

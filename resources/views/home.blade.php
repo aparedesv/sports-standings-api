@@ -1,107 +1,206 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cycling Standings</title>
+    <meta name="viewport" content="width=1920">
+    <meta http-equiv="refresh" content="3600">
+    <title>Cycling Wallpaper {{ $year }}</title>
     @vite('resources/scss/style.scss')
 </head>
 <body>
-    <h1>// cycling-standings</h1>
-
-    <div class="season-header">
+    <header class="header">
+        <span class="title">// cycling-standings</span>
         <span class="year">{{ $year }}</span>
-    </div>
+    </header>
 
-    <div class="leagues-grid">
-        @forelse($competitions as $competition)
-            <div class="league">
-                <div class="league-name">
-                    {{ $competition->league->name ?? 'Unknown' }}
-                    <span>{{ $competition->league->country->name ?? '' }}</span>
-                </div>
-
-                @if($competition->standings->count() > 0)
-                    @php
-                        $type = $competition->type ?? 'cycling';
-                        $isCyclingGC = $type === 'cycling_gc';
-                        $isCyclingStages = $type === 'cycling_stages';
-                        $isCyclingClassics = $type === 'cycling_classics';
-                        $isCxWorlds = $type === 'cx_worlds';
-                        $isCxStandings = $type === 'cx_standings';
-                        $isMtbStandings = $type === 'mtb_standings';
-                        $isRankingType = $isCxStandings || $isMtbStandings;
-                    @endphp
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                @if($isCyclingClassics)
-                                    <th>Race</th>
-                                    <th>Winner</th>
-                                    <th>2nd</th>
-                                    <th>3rd</th>
-                                @elseif($isCyclingGC)
-                                    <th>Rider</th>
-                                    <th>Team</th>
-                                    <th>Time</th>
-                                    <th>Gap</th>
-                                @elseif($isCyclingStages)
-                                    <th>Winner</th>
-                                    <th>Route</th>
-                                    <th>Leader</th>
-                                @elseif($isCxWorlds)
-                                    <th>Rider</th>
-                                    <th>Country</th>
-                                    <th>Category</th>
-                                @elseif($isRankingType)
-                                    <th>Rider</th>
-                                    <th>Country</th>
-                                    <th>Pts</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($competition->standings->sortBy('rank') as $standing)
-                                @php
-                                    $rowClass = $standing->rank <= 3 ? 'top-4' : '';
-                                @endphp
-                                <tr class="{{ $rowClass }}">
-                                    <td class="rank">{{ $standing->rank }}</td>
-                                    @if($isCyclingClassics)
-                                        <td class="team" title="{{ $standing->nickname ?? '' }}">{{ $standing->race_name ?? '-' }}</td>
-                                        <td>{{ $standing->team->name ?? '-' }}</td>
-                                        <td>{{ $standing->second ?? '-' }}</td>
-                                        <td>{{ $standing->third ?? '-' }}</td>
-                                    @elseif($isCyclingGC)
-                                        <td class="team">{{ $standing->team->name ?? '-' }}</td>
-                                        <td>{{ $standing->country ?? '' }}</td>
-                                        <td class="num">{{ $standing->points ?? '' }}</td>
-                                        <td class="num">{{ $standing->gap ?? '-' }}</td>
-                                    @elseif($isCyclingStages)
-                                        <td class="team">{{ $standing->team->name ?? '-' }}</td>
-                                        <td>{{ $standing->route ?? '' }}</td>
-                                        <td>{{ $standing->yellow ?? '' }}</td>
-                                    @elseif($isCxWorlds)
-                                        <td class="team">{{ $standing->team->name ?? '-' }}</td>
-                                        <td>{{ $standing->country ?? '' }}</td>
-                                        <td>{{ $standing->category ?? '' }}</td>
-                                    @elseif($isRankingType)
-                                        <td class="team">{{ $standing->team->name ?? '-' }}</td>
-                                        <td>{{ $standing->country ?? '' }}</td>
-                                        <td class="num">{{ $standing->points ?? 0 }}</td>
-                                    @endif
-                                </tr>
+    <div class="wallpaper-grid">
+        {{-- COLUMN 1: CLASSICS WITH PODIUM (MEN + WOMEN) --}}
+        <section class="section">
+            <h2 class="section-title">Monuments & Classics</h2>
+            @foreach($classics as $race)
+                <div class="subsection">
+                    <h3 class="subsection-title">{{ $race['name'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($race['men'] as $i => $rider)
+                                <div class="rider-row {{ $i === 0 ? 'leader' : 'podium' }}">
+                                    <span class="rank">{{ $i + 1 }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="country">{{ $rider['country'] }}</span>
+                                </div>
                             @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <p class="no-data">no data</p>
-                @endif
-            </div>
-        @empty
-            <p class="no-data">no competitions found</p>
-        @endforelse
+                        </div>
+                        @if($race['women'])
+                            <div class="col">
+                                <span class="col-header">Women</span>
+                                @foreach($race['women'] as $i => $rider)
+                                    <div class="rider-row {{ $i === 0 ? 'leader' : 'podium' }}">
+                                        <span class="rank">{{ $i + 1 }}.</span>
+                                        <span class="name">{{ $rider['rider'] }}</span>
+                                        <span class="country">{{ $rider['country'] }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </section>
+
+        {{-- COLUMN 2: GRAND TOURS (MEN + WOMEN) --}}
+        <section class="section">
+            <h2 class="section-title">Grand Tours</h2>
+
+            @foreach($grandTours as $key => $tour)
+                <div class="subsection">
+                    <h3 class="subsection-title">{{ $tour['name'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($tour['men'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="gap">{{ $rider['gap'] ?: '-' }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        @if($tour['women'])
+                            <div class="col">
+                                <span class="col-header">Women</span>
+                                @foreach($tour['women'] as $rider)
+                                    <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                        <span class="rank">{{ $rider['rank'] }}.</span>
+                                        <span class="name">{{ $rider['rider'] }}</span>
+                                        <span class="gap">{{ $rider['gap'] ?: '-' }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </section>
+
+        {{-- COLUMN 3: CYCLOCROSS + MTB --}}
+        <section class="section">
+            <h2 class="section-title">Cyclocross</h2>
+
+            @if(isset($cyclocross['worlds']))
+                <div class="subsection">
+                    <h3 class="subsection-title">World Champs - {{ $cyclocross['worlds']['location'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($cyclocross['worlds']['men'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="country">{{ $rider['country'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <span class="col-header">Women</span>
+                            @foreach($cyclocross['worlds']['women'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="country">{{ $rider['country'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(isset($cyclocross['worldcup']))
+                <div class="subsection">
+                    <h3 class="subsection-title">{{ $cyclocross['worldcup']['name'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($cyclocross['worldcup']['men'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <span class="col-header">Women</span>
+                            @foreach($cyclocross['worldcup']['women'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <h2 class="section-title" style="margin-top: 12px;">Mountain Bike</h2>
+
+            @if(isset($mtb['xco']))
+                <div class="subsection">
+                    <h3 class="subsection-title">{{ $mtb['xco']['name'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($mtb['xco']['men'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <span class="col-header">Women</span>
+                            @foreach($mtb['xco']['women'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(isset($mtb['dh']))
+                <div class="subsection">
+                    <h3 class="subsection-title">{{ $mtb['dh']['name'] }}</h3>
+                    <div class="dual-column">
+                        <div class="col">
+                            <span class="col-header">Men</span>
+                            @foreach($mtb['dh']['men'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="col">
+                            <span class="col-header">Women</span>
+                            @foreach($mtb['dh']['women'] as $rider)
+                                <div class="rider-row {{ $rider['rank'] == 1 ? 'leader' : ($rider['rank'] <= 3 ? 'podium' : '') }}">
+                                    <span class="rank">{{ $rider['rank'] }}.</span>
+                                    <span class="name">{{ $rider['rider'] }}</span>
+                                    <span class="points">{{ $rider['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </section>
     </div>
 </body>
 </html>

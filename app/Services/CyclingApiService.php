@@ -117,25 +117,54 @@ class CyclingApiService
     }
 
     /**
-     * Get Tour de France general classification
+     * Get Tour de France general classification from local JSON
      */
     public function getTourDeFranceGC(int $year = 2025): ?array
     {
-        $cacheKey = "cycling_tdf_gc_{$year}";
+        $cacheKey = "cycling_tdf_gc_{$year}_v2";
 
         return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
             try {
-                $response = Http::timeout(30)
-                    ->get("{$this->tourDataUrl}/men/TDF_Riders_History.csv");
+                $filePath = "{$this->localDataPath}/tdf_gc.json";
 
-                if ($response->successful()) {
-                    return $this->parseTdfGC($response->body(), $year);
+                if (!file_exists($filePath)) {
+                    Log::warning("TDF GC data file not found: {$filePath}");
+                    return null;
                 }
 
-                Log::error("LeTourDataSet GC error: " . $response->status());
-                return null;
+                $data = json_decode(file_get_contents($filePath), true);
+                $result = ['year' => $year, 'competition' => 'Tour de France'];
+
+                // Men's data
+                $menYear = (string)$year;
+                $menData = $data['men'][$menYear] ?? $data['men'][(string)($year-1)] ?? null;
+                if ($menData) {
+                    $result['men'] = [
+                        'name' => $menData['competition'] ?? 'Tour de France',
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $menData['standings']),
+                    ];
+                }
+
+                // Women's data (Tour de France Femmes)
+                $womenData = $data['women'][$menYear] ?? $data['women'][(string)($year-1)] ?? null;
+                if ($womenData) {
+                    $result['women'] = [
+                        'name' => $womenData['competition'] ?? 'Tour de France Femmes',
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $womenData['standings']),
+                    ];
+                }
+
+                return $result;
             } catch (\Exception $e) {
-                Log::error("LeTourDataSet GC exception: " . $e->getMessage());
+                Log::error("TDF GC exception: " . $e->getMessage());
                 return null;
             }
         });
@@ -294,7 +323,7 @@ class CyclingApiService
      */
     public function getGiroGC(int $year = 2025): ?array
     {
-        $cacheKey = "cycling_giro_gc_{$year}";
+        $cacheKey = "cycling_giro_gc_{$year}_v2";
 
         return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
             try {
@@ -306,26 +335,36 @@ class CyclingApiService
                 }
 
                 $data = json_decode(file_get_contents($filePath), true);
+                $result = ['year' => $year, 'competition' => "Giro d'Italia"];
 
-                if (!isset($data[(string)$year])) {
-                    Log::info("No Giro GC data for year {$year}");
-                    return null;
+                // Men's data
+                $menYear = (string)$year;
+                $menData = $data['men'][$menYear] ?? $data['men'][(string)($year-1)] ?? null;
+                if ($menData) {
+                    $result['men'] = [
+                        'name' => $menData['competition'] ?? "Giro d'Italia",
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $menData['standings']),
+                    ];
                 }
 
-                $yearData = $data[(string)$year];
+                // Women's data (Giro d'Italia Women runs in July, often previous year data)
+                $womenData = $data['women'][$menYear] ?? $data['women'][(string)($year-1)] ?? null;
+                if ($womenData) {
+                    $result['women'] = [
+                        'name' => $womenData['competition'] ?? "Giro d'Italia Women",
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $womenData['standings']),
+                    ];
+                }
 
-                return [
-                    'year' => $yearData['year'],
-                    'competition' => $yearData['competition'],
-                    'type' => 'General Classification',
-                    'standings' => array_map(fn($r) => [
-                        'rank' => $r['rank'],
-                        'rider' => $r['rider'],
-                        'team' => $r['team'],
-                        'time' => $r['time'] ?? '',
-                        'gap' => $r['gap'] ?? '',
-                    ], $yearData['standings']),
-                ];
+                return $result;
             } catch (\Exception $e) {
                 Log::error("Giro GC exception: " . $e->getMessage());
                 return null;
@@ -338,7 +377,7 @@ class CyclingApiService
      */
     public function getVueltaGC(int $year = 2025): ?array
     {
-        $cacheKey = "cycling_vuelta_gc_{$year}";
+        $cacheKey = "cycling_vuelta_gc_{$year}_v2";
 
         return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
             try {
@@ -350,26 +389,36 @@ class CyclingApiService
                 }
 
                 $data = json_decode(file_get_contents($filePath), true);
+                $result = ['year' => $year, 'competition' => 'Vuelta a España'];
 
-                if (!isset($data[(string)$year])) {
-                    Log::info("No Vuelta GC data for year {$year}");
-                    return null;
+                // Men's data
+                $menYear = (string)$year;
+                $menData = $data['men'][$menYear] ?? $data['men'][(string)($year-1)] ?? null;
+                if ($menData) {
+                    $result['men'] = [
+                        'name' => $menData['competition'] ?? 'Vuelta a España',
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $menData['standings']),
+                    ];
                 }
 
-                $yearData = $data[(string)$year];
+                // Women's data (Vuelta Femenina)
+                $womenData = $data['women'][$menYear] ?? $data['women'][(string)($year-1)] ?? null;
+                if ($womenData) {
+                    $result['women'] = [
+                        'name' => $womenData['competition'] ?? 'Vuelta Femenina',
+                        'standings' => array_map(fn($r) => [
+                            'rank' => $r['rank'],
+                            'rider' => $r['rider'],
+                            'gap' => $r['gap'] ?? '',
+                        ], $womenData['standings']),
+                    ];
+                }
 
-                return [
-                    'year' => $yearData['year'],
-                    'competition' => $yearData['competition'],
-                    'type' => 'General Classification',
-                    'standings' => array_map(fn($r) => [
-                        'rank' => $r['rank'],
-                        'rider' => $r['rider'],
-                        'team' => $r['team'],
-                        'time' => $r['time'] ?? '',
-                        'gap' => $r['gap'] ?? '',
-                    ], $yearData['standings']),
-                ];
+                return $result;
             } catch (\Exception $e) {
                 Log::error("Vuelta GC exception: " . $e->getMessage());
                 return null;
@@ -527,7 +576,7 @@ class CyclingApiService
      */
     public function getClassics(int $year = 2025): ?array
     {
-        $cacheKey = "cycling_classics_{$year}";
+        $cacheKey = "cycling_classics_{$year}_v2";
 
         return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
             try {
@@ -547,30 +596,40 @@ class CyclingApiService
 
                 // Process monuments
                 foreach ($data['monuments'] ?? [] as $key => $race) {
-                    if (isset($race['results'][(string)$year])) {
+                    $menYear = (string)$year;
+                    $menData = $race['men'][$menYear] ?? $race['men'][(string)($year-1)] ?? null;
+                    $womenData = isset($race['women'][$menYear]) ? $race['women'][$menYear] : null;
+
+                    if ($menData) {
                         $result['monuments'][] = [
                             'id' => $key,
                             'name' => $race['name'],
                             'nickname' => $race['nickname'],
                             'country' => $race['country'],
                             'distance_km' => $race['distance_km'],
-                            'date' => $race['results'][(string)$year]['date'],
-                            'podium' => $race['results'][(string)$year]['podium'],
+                            'date' => $menData['date'],
+                            'men' => $menData['podium'],
+                            'women' => $womenData ? $womenData['podium'] : null,
                         ];
                     }
                 }
 
                 // Process other classics
                 foreach ($data['other_classics'] ?? [] as $key => $race) {
-                    if (isset($race['results'][(string)$year])) {
+                    $menYear = (string)$year;
+                    $menData = $race['men'][$menYear] ?? $race['men'][(string)($year-1)] ?? null;
+                    $womenData = isset($race['women'][$menYear]) ? $race['women'][$menYear] : null;
+
+                    if ($menData) {
                         $result['other_classics'][] = [
                             'id' => $key,
                             'name' => $race['name'],
                             'nickname' => $race['nickname'],
                             'country' => $race['country'],
                             'distance_km' => $race['distance_km'],
-                            'date' => $race['results'][(string)$year]['date'],
-                            'podium' => $race['results'][(string)$year]['podium'],
+                            'date' => $menData['date'],
+                            'men' => $menData['podium'],
+                            'women' => $womenData ? $womenData['podium'] : null,
                         ];
                     }
                 }
