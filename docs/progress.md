@@ -2,7 +2,15 @@
 
 ## Resum del Projecte
 
-API per recopilar resultats i classificacions multiesportives, començant amb futbol. Utilitza openfootball/football.json com a font de dades lliure i oberta.
+API per recopilar resultats i classificacions multiesportives. Inclou:
+- **Futbol**: 10 lligues europees (Champions, Europa League, Premier, Bundesliga, Serie A, La Liga, etc.)
+- **Bàsquet**: NBA (Eastern i Western Conference) + Euroleague/Eurocup
+- **NFL**: AFC i NFC (32 equips)
+- **Formula 1**: Campionat de pilots i constructors
+- **Tennis**: Rànquing ATP i WTA (top 50)
+- **Ciclisme**: 3 Grans Voltes (Giro d'Italia, Tour de France, Vuelta a España)
+
+Utilitza l'API d'ESPN per dades en temps real a la vista pública, i openfootball/football.json per l'API interna.
 
 ---
 
@@ -242,6 +250,9 @@ sport-standings-api/
 ├── app/
 │   ├── Console/Commands/
 │   │   ├── SyncAll.php
+│   │   ├── SyncBasketball.php            # Sync/verify NBA data
+│   │   ├── SyncEuroleague.php            # Sync/verify Euroleague/Eurocup data
+│   │   ├── SyncCycling.php               # Sync/verify Cycling data
 │   │   ├── SyncLeagues.php
 │   │   ├── SyncTeams.php
 │   │   ├── SyncFixtures.php
@@ -271,7 +282,14 @@ sport-standings-api/
 │   ├── Providers/
 │   │   └── AppServiceProvider.php
 │   ├── Services/
-│   │   └── FootballJsonService.php
+│   │   ├── EspnFootballService.php       # ESPN API futbol
+│   │   ├── EspnNflService.php            # ESPN API NFL
+│   │   ├── EspnF1Service.php             # ESPN API Formula 1
+│   │   ├── EspnTennisService.php         # ESPN API Tennis
+│   │   ├── EuroleagueApiService.php      # Euroleague API bàsquet europeu
+│   │   ├── CyclingApiService.php         # TheSportsDB + LeTourDataSet
+│   │   ├── FootballJsonService.php       # openfootball (API interna)
+│   │   └── NbaApiService.php             # ESPN API bàsquet
 │   └── constants.php
 ├── config/
 │   ├── permission.php
@@ -305,6 +323,13 @@ sport-standings-api/
 │   ├── web.php               # Ruta home
 │   └── console.php           # Scheduler configuration
 └── storage/
+    ├── app/
+    │   └── cycling/
+    │       ├── giro_gc.json          # Giro GC (2024, 2025)
+    │       ├── giro_stages.json      # Giro Stages (2024, 2025)
+    │       ├── vuelta_gc.json        # Vuelta GC (2024, 2025)
+    │       ├── vuelta_stages.json    # Vuelta Stages (2024, 2025)
+    │       └── classics.json         # Monuments i clàssiques (2022-2025)
     └── logs/
         └── sync-all.log      # Sync logs
 ```
@@ -446,10 +471,251 @@ GET /api/fixtures?season_id=317
 
 ---
 
-## 10. Vista Pública (Home)
+## 10. ESPN API Integration
 
 ### Descripció:
-Vista pública minimalista que mostra les classificacions de totes les lligues, organitzada per esports i temporades.
+La vista pública utilitza l'API d'ESPN per obtenir dades en temps real de múltiples esports (futbol, bàsquet, NFL, F1, tennis). Això elimina la necessitat de sincronització manual i proporciona classificacions sempre actualitzades.
+
+### API Base URLs:
+```
+Football:   https://site.web.api.espn.com/apis/v2/sports/soccer/{league}/standings
+Basketball: https://site.api.espn.com/apis/v2/sports/basketball/nba/standings
+NFL:        https://site.api.espn.com/apis/v2/sports/football/nfl/standings
+F1:         https://site.web.api.espn.com/apis/v2/sports/racing/f1/standings
+Tennis:     https://site.api.espn.com/apis/site/v2/sports/tennis/atp/rankings
+```
+
+### Avantatges vs openfootball:
+- Dades en **temps real** (cache 30 min)
+- Sense sincronització manual
+- Inclou competicions europees (Champions, Europa League)
+- Sense API key requerida
+
+### Serveis creats:
+
+#### EspnFootballService
+| Mètode | Descripció |
+|--------|------------|
+| `getStandings($leagueCode)` | Obtenir classificació d'una lliga |
+| `getAllStandings()` | Obtenir totes les classificacions |
+| `clearCache($leagueCode)` | Netejar cache |
+
+#### NbaApiService
+| Mètode | Descripció |
+|--------|------------|
+| `getStandings()` | Obtenir classificacions NBA |
+| `getCurrentSeason()` | Temporada actual |
+| `clearCache()` | Netejar cache |
+
+#### EspnNflService
+| Mètode | Descripció |
+|--------|------------|
+| `getStandings()` | Obtenir classificacions NFL (AFC/NFC) |
+| `getCurrentSeason()` | Temporada actual |
+| `clearCache()` | Netejar cache |
+
+#### EspnF1Service
+| Mètode | Descripció |
+|--------|------------|
+| `getStandings()` | Obtenir classificacions F1 (pilots i constructors) |
+| `getCurrentSeason()` | Temporada actual |
+| `clearCache()` | Netejar cache |
+
+#### EspnTennisService
+| Mètode | Descripció |
+|--------|------------|
+| `getRankings($tour)` | Obtenir rànquing ATP o WTA |
+| `getAtpRankings()` | Rànquing ATP (top 50) |
+| `getWtaRankings()` | Rànquing WTA |
+| `clearCache($tour)` | Netejar cache |
+
+#### EuroleagueApiService
+| Mètode | Descripció |
+|--------|------------|
+| `getStandings($competition, $seasonCode)` | Classificació Euroleague/Eurocup |
+| `getTeams($competition, $seasonCode)` | Equips amb informació |
+| `getAllStandings()` | Totes les classificacions |
+| `getCurrentSeasonCode($competition)` | Codi temporada actual (E2024, U2024) |
+| `getAvailableCompetitions()` | Competicions disponibles |
+| `getAvailableSeasons($competition)` | Temporades disponibles |
+| `clearCache($competition, $seasonCode)` | Netejar cache |
+
+#### CyclingApiService
+| Mètode | Descripció |
+|--------|------------|
+| `getWorldTourCalendar($year)` | Calendari UCI World Tour (TheSportsDB) |
+| `getTourDeFranceGC($year)` | Classificació general Tour de France |
+| `getTourDeFranceStages($year)` | Resultats etapes Tour de France |
+| `getTourDeFrance($year)` | Totes les dades TdF (GC + etapes) |
+| `getGiroGC($year)` | Classificació general Giro d'Italia |
+| `getGiroStages($year)` | Resultats etapes Giro d'Italia |
+| `getVueltaGC($year)` | Classificació general Vuelta a España |
+| `getVueltaStages($year)` | Resultats etapes Vuelta a España |
+| `getAllGrandToursGC($year)` | GC de les 3 grans voltes |
+| `getClassics($year)` | Totes les clàssiques (Monuments + altres) |
+| `getMonuments($year)` | Només els 5 Monuments |
+| `getClassicResult($raceId, $year)` | Resultat d'una clàssica específica |
+| `getStandingsForHome($year)` | Dades per la vista home |
+| `getAvailableYears()` | Anys disponibles (2010-actual) |
+| `clearCache($year)` | Netejar cache |
+
+### Competicions de Futbol (10):
+| Codi ESPN | Lliga | País |
+|-----------|-------|------|
+| `uefa.champions` | Champions League | Europe |
+| `uefa.europa` | Europa League | Europe |
+| `eng.1` | Premier League | England |
+| `ger.1` | Bundesliga | Germany |
+| `ita.1` | Serie A | Italy |
+| `esp.1` | La Liga | Spain |
+| `fra.1` | Ligue 1 | France |
+| `ned.1` | Eredivisie | Netherlands |
+| `por.1` | Primeira Liga | Portugal |
+| `bel.1` | Pro League | Belgium |
+
+### Bàsquet:
+**NBA:**
+- Eastern Conference (15 equips)
+- Western Conference (15 equips)
+- Ordenat per WIN%
+
+**Euroleague/Eurocup:**
+- Euroleague (18 equips)
+- Eurocup Group A (10 equips)
+- Eurocup Group B (10 equips)
+- Ordenat per victòries
+
+### NFL:
+- AFC Conference (16 equips)
+- NFC Conference (16 equips)
+- Estadístiques: W, L, T, PCT
+- Ordenat per WIN%
+
+### Formula 1:
+- Drivers Championship (top 20 pilots)
+- Constructors Championship (10 equips)
+- Estadístiques: Posició, Nom, País, Punts
+
+### Tennis:
+- **ATP Rankings** - Top 50 masculí
+- **WTA Rankings** - Top 50 femení
+- Estadístiques: Posició, Nom, País, Punts
+
+### Ciclisme (3 Grans Voltes):
+**Fonts de dades:**
+- **TheSportsDB** - Calendari UCI World Tour
+- **LeTourDataSet** (GitHub) - Resultats Tour de France
+- **Fitxers JSON locals** - Giro d'Italia i Vuelta a España
+
+**Giro d'Italia 2025:**
+- Classificació General (top 10)
+- Resultats per etapes (21 etapes)
+- Guanyador: Simon Yates (Visma-Lease a Bike)
+- Distància: 3.445 km
+
+**Tour de France 2025:**
+- Classificació General (top 10)
+- Resultats per etapes (21 etapes)
+- Guanyador: Tadej Pogacar (UAE Team Emirates)
+- Distància: 3.323 km
+
+**Vuelta a España 2025:**
+- Classificació General (top 10)
+- Resultats per etapes (21 etapes)
+- Guanyador: Jonas Vingegaard (Visma-Lease a Bike)
+- Distància: 3.300 km
+
+**Dades disponibles:**
+- Rank, Rider, Team, Time, Gap (GC)
+- Stage, Winner, Route, Leader Jersey (Stages)
+
+**Fitxers JSON:**
+- `storage/app/cycling/giro_gc.json` - GC Giro (2024, 2025)
+- `storage/app/cycling/giro_stages.json` - Etapes Giro (2024, 2025)
+- `storage/app/cycling/vuelta_gc.json` - GC Vuelta (2024, 2025)
+- `storage/app/cycling/vuelta_stages.json` - Etapes Vuelta (2024, 2025)
+- `storage/app/cycling/classics.json` - Monuments i clàssiques (2022-2025)
+
+### Monuments (5 Grans Clàssiques):
+| Cursa | Sobrenom | País | Distància |
+|-------|----------|------|-----------|
+| Milan-San Remo | La Primavera | Italy | 289 km |
+| Tour of Flanders | De Ronde | Belgium | 269 km |
+| Paris-Roubaix | L'Enfer du Nord | France | 259 km |
+| Liège-Bastogne-Liège | La Doyenne | Belgium | 252 km |
+| Il Lombardia | La Classica delle Foglie Morte | Italy | 252 km |
+
+### Altres Clàssiques:
+| Cursa | Sobrenom | País | Distància |
+|-------|----------|------|-----------|
+| Strade Bianche | La Classica del Sterrato | Italy | 184 km |
+| Gent-Wevelgem | De Witte Molenrace | Belgium | 261 km |
+| Amstel Gold Race | Dutch Monument | Netherlands | 254 km |
+| La Flèche Wallonne | Mur de Huy | Belgium | 194 km |
+
+**Guanyadors 2025 (8 curses):**
+| Cursa | Guanyador | 2n | 3r |
+|-------|-----------|----|----|
+| Strade Bianche | Tadej Pogacar | Tom Pidcock | Tim Wellens |
+| Milan-San Remo | Mathieu van der Poel | Filippo Ganna | Tadej Pogacar |
+| Gent-Wevelgem | Mads Pedersen | Tim Merlier | Jonathan Milan |
+| Tour of Flanders | Tadej Pogacar | Mads Pedersen | M. van der Poel |
+| Paris-Roubaix | Mathieu van der Poel | Tadej Pogacar | Mads Pedersen |
+| Amstel Gold Race | Mattias Skjelmose | Tadej Pogacar | Remco Evenepoel |
+| La Flèche Wallonne | Tadej Pogacar | Kevin Vauquelin | Tom Pidcock |
+| Liège-Bastogne-Liège | Tadej Pogacar | Giulio Ciccone | Ben Healy |
+
+### Bàsquet Europeu (Euroleague API):
+
+**API Base URL:** `https://api-live.euroleague.net/v1`
+
+| Competició | Season Code | Equips |
+|------------|-------------|--------|
+| Euroleague | E2024 (2024-25) | 18 |
+| Eurocup | U2024 (2024-25) | 20 |
+
+**Endpoints disponibles:**
+- `/v1/standings?seasonCode=E2024` - Classificació
+- `/v1/teams?seasonCode=E2024` - Equips amb plantilles
+- `/v1/games?seasonCode=E2024&gameCode=X` - Box score
+- `/v1/results?seasonCode=E2024` - Resultats
+- `/v1/schedules?seasonCode=E2024` - Calendari
+
+**Equips Euroleague 2024-25:**
+Real Madrid, FC Barcelona, Baskonia, Olympiacos, Panathinaikos, Fenerbahçe, Anadolu Efes, AS Monaco, EA7 Milan, Virtus Bologna, Bayern Munich, ALBA Berlin, Maccabi Tel Aviv, Paris Basketball, Partizan, Crvena Zvezda, LDLC ASVEL, Zalgiris
+
+### Comandes:
+```bash
+# Verificar dades NBA
+php artisan sync:basketball
+php artisan sync:basketball --clear-cache
+
+# Verificar dades Euroleague/Eurocup
+php artisan sync:euroleague                              # Totes les competicions
+php artisan sync:euroleague --competition=euroleague     # Només Euroleague
+php artisan sync:euroleague --competition=eurocup        # Només Eurocup
+php artisan sync:euroleague --season=E2024               # Temporada específica
+php artisan sync:euroleague --teams                      # Mostrar equips
+php artisan sync:euroleague --clear-cache                # Netejar cache
+
+# Verificar dades Ciclisme (3 Grans Voltes)
+php artisan sync:cycling                                 # Tot (GC + stages de les 3 voltes)
+php artisan sync:cycling --race=giro                     # Només Giro d'Italia
+php artisan sync:cycling --race=tour                     # Només Tour de France
+php artisan sync:cycling --race=vuelta                   # Només Vuelta a España
+php artisan sync:cycling --year=2024                     # Any específic
+php artisan sync:cycling --clear-cache                   # Netejar cache
+
+# Netejar cache ESPN
+php artisan cache:clear
+```
+
+---
+
+## 11. Vista Pública (Home)
+
+### Descripció:
+Vista pública minimalista que mostra classificacions multiesportives (futbol, bàsquet, NFL, F1, tennis), organitzada per esports i temporades.
 
 ### Accés:
 ```
@@ -459,35 +725,38 @@ http://localhost:8000/
 ### Característiques:
 - Disseny minimalista amb font monospace (estil terminal)
 - Tema fosc (GitHub dark)
-- Tabs per esports (preparat per futurs esports)
-- Acordions per temporades (només mostra temporades amb dades)
+- Tabs per esports (Football, Basketball, NFL, Formula 1, Tennis)
+- Acordions per temporades
 - Grid responsive de lligues
-- Indicadors de color: verd (top 4), vermell (descens)
+- Taules adaptades per cada esport (W/L/D/Pts, W/L/PCT, Rank/Pts)
+- Indicadors de color: verd (top 4/6), taronja (play-in), vermell (descens)
 
 ### Ordenació de lligues:
-1. **Lligues principals** (primer):
-   - Premier League (England)
-   - Bundesliga (Germany)
-   - Serie A (Italy)
-   - La Liga (Spain)
-2. **Resta de lligues** (després):
-   - Ordenades alfabèticament per país i nom de lliga
+1. **Competicions europees** (primer):
+   - Champions League
+   - Europa League
+2. **Lligues principals**:
+   - Premier League, Bundesliga, Serie A, La Liga
+3. **Altres lligues** (ordenades per país):
+   - Ligue 1, Eredivisie, Primeira Liga, Pro League
 
 ### Fitxers:
 | Fitxer | Descripció |
 |--------|------------|
 | `app/Http/Controllers/HomeController.php` | Controller amb lògica de dades |
+| `app/Services/EspnFootballService.php` | Servei ESPN futbol |
+| `app/Services/NbaApiService.php` | Servei ESPN bàsquet |
+| `app/Services/EspnNflService.php` | Servei ESPN NFL |
+| `app/Services/EspnF1Service.php` | Servei ESPN Formula 1 |
+| `app/Services/EspnTennisService.php` | Servei ESPN Tennis |
+| `app/Services/EuroleagueApiService.php` | Servei Euroleague API |
 | `resources/views/home.blade.php` | Vista Blade amb tabs i acordions |
 | `resources/scss/style.scss` | Estils SCSS amb variables |
-| `routes/web.php` | Ruta principal `/` |
 
 ### Assets (Vite + SCSS):
 ```bash
-# Desenvolupament
-npm run dev
-
-# Producció
-npm run build
+npm run dev    # Desenvolupament
+npm run build  # Producció
 ```
 
 ### Variables SCSS principals:
@@ -499,36 +768,30 @@ $color-success: #3fb950;
 $color-danger: #f85149;
 ```
 
-### Estructura de dades:
-```php
-$sports = [
-    'football' => [
-        'name' => 'Football',
-        'seasons' => [
-            '2025' => [Season, Season, ...],  // 4 lligues principals + resta
-            '2024' => [...],
-        ],
-    ],
-    // Futurs esports...
-];
-```
-
 ---
 
-## 11. Pròxims Passos Suggerits
+## 12. Pròxims Passos Suggerits
 
-- [ ] Afegir més esports (bàsquet, tennis, etc.)
 - [ ] Afegir WebSockets per resultats en temps real
 - [ ] Crear dashboard amb estadístiques
 - [ ] Afegir tests unitaris i d'integració
 - [ ] Implementar rate limiting
 - [ ] Afegir suport per múltiples idiomes
+- [x] Afegir WTA (tennis femení) - **Completat**
+- [x] Integració Euroleague API (bàsquet europeu) - **Completat (Euroleague + Eurocup)**
 - [x] Programar sincronització automàtica (scheduler) - **Completat**
 - [x] Documentar API amb OpenAPI/Swagger - **Completat (request-docs)**
 - [x] Suport temporada 2025-26 - **Completat**
 - [x] Sincronitzar totes les lligues 2025-26 - **Completat (15 lligues, 4.742 partits)**
 - [x] Eliminar rutes HEAD duplicades de request-docs - **Completat (controller override)**
 - [x] Vista pública amb classificacions - **Completat (tabs + acordions)**
+- [x] Integració ESPN API (futbol) - **Completat (10 competicions)**
+- [x] Integració ESPN API (bàsquet/NBA) - **Completat (30 equips)**
+- [x] Integració ESPN API (NFL) - **Completat (AFC/NFC, 32 equips)**
+- [x] Integració ESPN API (Formula 1) - **Completat (pilots i constructors)**
+- [x] Integració ESPN API (Tennis ATP) - **Completat (top 50)**
+- [x] Integració Ciclisme (3 Grans Voltes) - **Completat (Giro, Tour, Vuelta - GC + Stages)**
+- [x] Integració Ciclisme (Monuments i Clàssiques) - **Completat (5 Monuments + Strade Bianche)**
 
 ---
 
@@ -572,4 +835,4 @@ php artisan lrd:export                        # Exportar OpenAPI JSON
 
 ---
 
-*Última actualització: 2025-12-21*
+*Última actualització: 2025-12-24 (8 clàssiques: 5 Monuments + Strade Bianche, Gent-Wevelgem, Amstel Gold Race, La Flèche Wallonne)*

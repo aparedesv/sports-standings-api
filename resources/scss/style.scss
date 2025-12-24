@@ -217,6 +217,10 @@ tr:hover td {
     color: $color-success;
 }
 
+.play-in td.rank {
+    color: $color-accent;
+}
+
 .relegation td.rank {
     color: $color-danger;
 }
