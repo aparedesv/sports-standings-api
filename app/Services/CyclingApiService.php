@@ -648,6 +648,121 @@ class CyclingApiService
     }
 
     /**
+     * Get Cyclocross data
+     */
+    public function getCyclocross(string $season = '2024-2025'): ?array
+    {
+        $cacheKey = "cycling_cyclocross_{$season}";
+
+        return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($season) {
+            try {
+                $filePath = "{$this->localDataPath}/cyclocross.json";
+                if (!file_exists($filePath)) return null;
+
+                $data = json_decode(file_get_contents($filePath), true);
+                return [
+                    'world_cup' => $data['world_cup'][$season] ?? null,
+                    'world_championships' => $data['world_championships'][substr($season, 0, 4)] ?? $data['world_championships']['2025'] ?? null,
+                    'uci_rankings' => $data['uci_rankings']['2025'] ?? null,
+                ];
+            } catch (\Exception $e) {
+                Log::error("Cyclocross exception: " . $e->getMessage());
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Get Cyclocross World Cup standings
+     */
+    public function getCyclocrossWorldCup(string $season = '2024-2025'): ?array
+    {
+        $filePath = "{$this->localDataPath}/cyclocross.json";
+        if (!file_exists($filePath)) return null;
+
+        $data = json_decode(file_get_contents($filePath), true);
+        return $data['world_cup'][$season] ?? null;
+    }
+
+    /**
+     * Get Cyclocross World Championships
+     */
+    public function getCyclocrossWorldChampionships(int $year = 2025): ?array
+    {
+        $filePath = "{$this->localDataPath}/cyclocross.json";
+        if (!file_exists($filePath)) return null;
+
+        $data = json_decode(file_get_contents($filePath), true);
+        return $data['world_championships'][(string)$year] ?? null;
+    }
+
+    /**
+     * Get MTB XCO World Cup
+     */
+    public function getMtbXcoWorldCup(int $year = 2024): ?array
+    {
+        $cacheKey = "cycling_mtb_xco_{$year}";
+
+        return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
+            try {
+                $filePath = "{$this->localDataPath}/mtb.json";
+                if (!file_exists($filePath)) return null;
+
+                $data = json_decode(file_get_contents($filePath), true);
+                return $data['xco_world_cup'][(string)$year] ?? null;
+            } catch (\Exception $e) {
+                Log::error("MTB XCO exception: " . $e->getMessage());
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Get MTB Downhill World Cup
+     */
+    public function getMtbDownhillWorldCup(int $year = 2024): ?array
+    {
+        $cacheKey = "cycling_mtb_dh_{$year}";
+
+        return Cache::remember($cacheKey, $this->cacheMinutes * 60, function () use ($year) {
+            try {
+                $filePath = "{$this->localDataPath}/mtb.json";
+                if (!file_exists($filePath)) return null;
+
+                $data = json_decode(file_get_contents($filePath), true);
+                return $data['downhill_world_cup'][(string)$year] ?? null;
+            } catch (\Exception $e) {
+                Log::error("MTB Downhill exception: " . $e->getMessage());
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Get MTB World Championships
+     */
+    public function getMtbWorldChampionships(int $year = 2024): ?array
+    {
+        $filePath = "{$this->localDataPath}/mtb.json";
+        if (!file_exists($filePath)) return null;
+
+        $data = json_decode(file_get_contents($filePath), true);
+        return $data['world_championships'][(string)$year] ?? null;
+    }
+
+    /**
+     * Get MTB Olympics results
+     */
+    public function getMtbOlympics(): ?array
+    {
+        $filePath = "{$this->localDataPath}/mtb.json";
+        if (!file_exists($filePath)) return null;
+
+        $data = json_decode(file_get_contents($filePath), true);
+        return $data['olympics']['paris_2024'] ?? null;
+    }
+
+    /**
      * Clear cache
      */
     public function clearCache(?int $year = null): void
@@ -661,6 +776,9 @@ class CyclingApiService
             Cache::forget("cycling_vuelta_gc_{$year}");
             Cache::forget("cycling_vuelta_stages_{$year}");
             Cache::forget("cycling_classics_{$year}");
+            Cache::forget("cycling_cyclocross_{$year}");
+            Cache::forget("cycling_mtb_xco_{$year}");
+            Cache::forget("cycling_mtb_dh_{$year}");
         } else {
             foreach ($this->getAvailableYears() as $y) {
                 Cache::forget("cycling_worldtour_calendar_{$y}");
@@ -671,6 +789,9 @@ class CyclingApiService
                 Cache::forget("cycling_vuelta_gc_{$y}");
                 Cache::forget("cycling_vuelta_stages_{$y}");
                 Cache::forget("cycling_classics_{$y}");
+                Cache::forget("cycling_cyclocross_{$y}");
+                Cache::forget("cycling_mtb_xco_{$y}");
+                Cache::forget("cycling_mtb_dh_{$y}");
             }
         }
     }

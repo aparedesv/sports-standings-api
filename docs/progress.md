@@ -1,16 +1,13 @@
-# Sport Standings API - Progress
+# Cycling Standings - Progress
 
 ## Resum del Projecte
 
-API per recopilar resultats i classificacions multiesportives. Inclou:
-- **Futbol**: 10 lligues europees (Champions, Europa League, Premier, Bundesliga, Serie A, La Liga, etc.)
-- **Bàsquet**: NBA (Eastern i Western Conference) + Euroleague/Eurocup
-- **NFL**: AFC i NFC (32 equips)
-- **Formula 1**: Campionat de pilots i constructors
-- **Tennis**: Rànquing ATP i WTA (top 50)
-- **Ciclisme**: 3 Grans Voltes (Giro d'Italia, Tour de France, Vuelta a España)
+Aplicació dedicada exclusivament al ciclisme professional. Inclou:
+- **Road Cycling**: 3 Grans Voltes (Giro, Tour, Vuelta) + 8 Clàssiques (5 Monuments + 3 altres)
+- **Ciclocross (CX)**: World Championships + UCI World Cup (Men/Women)
+- **Mountain Bike (MTB/BTT)**: XCO World Cup + Downhill World Cup + Olympics
 
-Utilitza l'API d'ESPN per dades en temps real a la vista pública, i openfootball/football.json per l'API interna.
+Utilitza fitxers JSON locals per emmagatzemar les dades de ciclisme.
 
 ---
 
@@ -329,7 +326,9 @@ sport-standings-api/
     │       ├── giro_stages.json      # Giro Stages (2024, 2025)
     │       ├── vuelta_gc.json        # Vuelta GC (2024, 2025)
     │       ├── vuelta_stages.json    # Vuelta Stages (2024, 2025)
-    │       └── classics.json         # Monuments i clàssiques (2022-2025)
+    │       ├── classics.json         # Monuments i clàssiques (2022-2025)
+    │       ├── cyclocross.json       # CX World Cup + World Championships
+    │       └── mtb.json              # MTB XCO + Downhill + Olympics
     └── logs/
         └── sync-all.log      # Sync logs
 ```
@@ -543,19 +542,28 @@ Tennis:     https://site.api.espn.com/apis/site/v2/sports/tennis/atp/rankings
 #### CyclingApiService
 | Mètode | Descripció |
 |--------|------------|
-| `getWorldTourCalendar($year)` | Calendari UCI World Tour (TheSportsDB) |
+| **Road - Grand Tours** | |
 | `getTourDeFranceGC($year)` | Classificació general Tour de France |
 | `getTourDeFranceStages($year)` | Resultats etapes Tour de France |
-| `getTourDeFrance($year)` | Totes les dades TdF (GC + etapes) |
 | `getGiroGC($year)` | Classificació general Giro d'Italia |
 | `getGiroStages($year)` | Resultats etapes Giro d'Italia |
 | `getVueltaGC($year)` | Classificació general Vuelta a España |
 | `getVueltaStages($year)` | Resultats etapes Vuelta a España |
 | `getAllGrandToursGC($year)` | GC de les 3 grans voltes |
+| **Road - Classics** | |
 | `getClassics($year)` | Totes les clàssiques (Monuments + altres) |
 | `getMonuments($year)` | Només els 5 Monuments |
 | `getClassicResult($raceId, $year)` | Resultat d'una clàssica específica |
-| `getStandingsForHome($year)` | Dades per la vista home |
+| **Ciclocross (CX)** | |
+| `getCyclocross($season)` | Totes les dades CX d'una temporada |
+| `getCyclocrossWorldCup($season)` | UCI CX World Cup (standings + race winners) |
+| `getCyclocrossWorldChampionships($year)` | CX World Championships (podiums) |
+| **Mountain Bike (MTB)** | |
+| `getMtbXcoWorldCup($year)` | MTB XCO World Cup standings |
+| `getMtbDownhillWorldCup($year)` | MTB Downhill World Cup standings |
+| `getMtbWorldChampionships($year)` | MTB World Championships |
+| `getMtbOlympics()` | MTB Olympic Games results |
+| **Utils** | |
 | `getAvailableYears()` | Anys disponibles (2010-actual) |
 | `clearCache($year)` | Netejar cache |
 
@@ -664,6 +672,81 @@ Tennis:     https://site.api.espn.com/apis/site/v2/sports/tennis/atp/rankings
 | Amstel Gold Race | Mattias Skjelmose | Tadej Pogacar | Remco Evenepoel |
 | La Flèche Wallonne | Tadej Pogacar | Kevin Vauquelin | Tom Pidcock |
 | Liège-Bastogne-Liège | Tadej Pogacar | Giulio Ciccone | Ben Healy |
+
+### Ciclocross (CX):
+
+**Fitxer JSON:** `storage/app/cycling/cyclocross.json`
+
+**World Championships:**
+| Any | Localització | Men Elite | Women Elite |
+|-----|--------------|-----------|-------------|
+| 2025 | Liévin, France | Mathieu van der Poel | Fem van Empel |
+| 2024 | Tábor, Czech Republic | Mathieu van der Poel | Fem van Empel |
+| 2023 | Hoogerheide, Netherlands | Mathieu van der Poel | Fem van Empel |
+
+**UCI World Cup 2024-25:**
+| Categoria | Líder | País | Punts |
+|-----------|-------|------|-------|
+| Men Elite | Michael Vanthourenhout | BEL | 284 |
+| Women Elite | Lucinda Brand | NED | 310 |
+
+**Top 5 Men World Cup 2024-25:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Michael Vanthourenhout | BEL | 284 |
+| 2 | Eli Iserbyt | BEL | 257 |
+| 3 | Niels Vandeputte | BEL | 226 |
+| 4 | Thibau Nys | BEL | 210 |
+| 5 | Laurens Sweeck | BEL | 186 |
+
+**Top 5 Women World Cup 2024-25:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Lucinda Brand | NED | 310 |
+| 2 | Fem van Empel | NED | 285 |
+| 3 | Ceylin del Carmen Alvarado | NED | 248 |
+| 4 | Puck Pieterse | NED | 230 |
+| 5 | Marie Schreiber | LUX | 195 |
+
+### Mountain Bike (MTB/BTT):
+
+**Fitxer JSON:** `storage/app/cycling/mtb.json`
+
+**XCO World Cup 2024:**
+| Categoria | Líder | País | Punts |
+|-----------|-------|------|-------|
+| Men Elite | Tom Pidcock | GBR | 1420 |
+| Women Elite | Puck Pieterse | NED | 1380 |
+
+**Top 5 Men XCO World Cup 2024:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Tom Pidcock | GBR | 1420 |
+| 2 | Nino Schurter | SUI | 1285 |
+| 3 | Alan Hatherly | RSA | 1190 |
+| 4 | Victor Koretzky | FRA | 1125 |
+| 5 | Sam Gaze | NZL | 1050 |
+
+**Top 5 Women XCO World Cup 2024:**
+| Rank | Rider | Country | Points |
+|------|-------|---------|--------|
+| 1 | Puck Pieterse | NED | 1380 |
+| 2 | Pauline Ferrand-Prévot | FRA | 1320 |
+| 3 | Haley Batten | USA | 1185 |
+| 4 | Laura Stigger | AUT | 1090 |
+| 5 | Loana Lecomte | FRA | 1025 |
+
+**Downhill World Cup 2024:**
+| Categoria | Líder | País | Punts |
+|-----------|-------|------|-------|
+| Men Elite | Loïc Bruni | FRA | 1180 |
+| Women Elite | Valentina Höll | AUT | 1250 |
+
+**Paris 2024 Olympics - MTB XCO:**
+| Categoria | Gold | Silver | Bronze |
+|-----------|------|--------|--------|
+| Men Elite | Tom Pidcock (GBR) | Victor Koretzky (FRA) | Alan Hatherly (RSA) |
+| Women Elite | Pauline Ferrand-Prévot (FRA) | Haley Batten (USA) | Jenny Rissveds (SWE) |
 
 ### Bàsquet Europeu (Euroleague API):
 
@@ -791,7 +874,9 @@ $color-danger: #f85149;
 - [x] Integració ESPN API (Formula 1) - **Completat (pilots i constructors)**
 - [x] Integració ESPN API (Tennis ATP) - **Completat (top 50)**
 - [x] Integració Ciclisme (3 Grans Voltes) - **Completat (Giro, Tour, Vuelta - GC + Stages)**
-- [x] Integració Ciclisme (Monuments i Clàssiques) - **Completat (5 Monuments + Strade Bianche)**
+- [x] Integració Ciclisme (Monuments i Clàssiques) - **Completat (5 Monuments + 3 altres)**
+- [x] Integració Ciclocross (CX) - **Completat (World Championships + World Cup Men/Women)**
+- [x] Integració Mountain Bike (MTB/BTT) - **Completat (XCO + Downhill World Cup + Olympics)**
 
 ---
 
@@ -835,4 +920,4 @@ php artisan lrd:export                        # Exportar OpenAPI JSON
 
 ---
 
-*Última actualització: 2025-12-24 (8 clàssiques: 5 Monuments + Strade Bianche, Gent-Wevelgem, Amstel Gold Race, La Flèche Wallonne)*
+*Última actualització: 2025-12-24 (Branca cycling: Road + CX + MTB)*
